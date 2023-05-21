@@ -27,15 +27,26 @@ function generateSampleData(sampleSize) {
     const phone = faker.phone.phoneNumber();
     const address = faker.address.streetAddress();
     const ssn = faker.random.number({ min: 100000000, max: 999999999 }).toString();
-    const corrId = uuidv4();
+    var corrIdA = "";
+    var corrIdB = "";
     // const createdTimestamp = new Date().toISOString(); 
     const createdTimestamp = new Date();
+
+    const randomNumber = Math.floor(Math.random() * 100);
+    if (randomNumber < 40) {
+      // If the random number is less than 40, assign the same corrId to both dataA and dataB
+      corrIdA = corrIdB = uuidv4();
+    }else {
+      // Otherwise, generate different corrIds for dataA and dataB
+      corrIdA = uuidv4();
+      corrIdB = uuidv4();
+    }
 
     dataA.push({ 
       _id: {
         "$oid": new ObjectId().toString()
       }, 
-      corrId: corrId, 
+      corrId: corrIdA, 
       name: name, 
       email: email, 
       phone: phone, 
@@ -48,7 +59,7 @@ function generateSampleData(sampleSize) {
       _id: {
         "$oid": new ObjectId().toString()
       }, 
-      corrId: corrId, 
+      corrId: corrIdB, 
       createdTimestamp: {
         "$date": createdTimestamp
       }
