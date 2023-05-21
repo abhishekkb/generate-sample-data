@@ -1,0 +1,18 @@
+{
+  "name": "generate-sample-data",
+  "version": "1.0.0",
+  "description": "generate sample data",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "faker": "^5.5.3",
+    "mongodb": "^5.5.0",
+    "uuid": "^9.0.0"
+  }
+}
