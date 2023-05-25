@@ -15,8 +15,8 @@ Correlation Id commonality between these two collection is kept at 40%. It will 
 2. Open a terminal and navigate to the project directory.
 3. Run the following command to install the required dependencies:
 
-   ```bash
+# bash
    npm install
 
-   ```run on local
+# run on local
    node index.js | tee -a out.log
