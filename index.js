@@ -5,7 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 const { ObjectId } = require('mongodb');
 
 // MongoDB connection URL
-const url = 'mongodb://localhost:27017';
+// const url = 'mongodb://localhost:27017';
+const url = 'mongodb://127.0.0.1:27017';
 // MongoDB database name
 const dbName = 'test';
 // MongoDB collection names
@@ -26,7 +27,7 @@ function generateSampleData(sampleSize) {
     const email = faker.internet.email();
     const phone = faker.phone.phoneNumber();
     const address = faker.address.streetAddress();
-    const ssn = faker.random.number({ min: 100000000, max: 999999999 }).toString();
+    const ssn = faker.datatype.number({ min: 100000000, max: 999999999 }).toString();
     var corrIdA = "";
     var corrIdB = "";
     // const createdTimestamp = new Date().toISOString(); 
@@ -43,26 +44,28 @@ function generateSampleData(sampleSize) {
     }
 
     dataA.push({ 
-      _id: {
-        "$oid": new ObjectId().toString()
-      }, 
+      // _id: {
+      //   "$oid": new ObjectId().toString()
+      // }, 
       corrId: corrIdA, 
       name: name, 
       email: email, 
       phone: phone, 
       address: address, 
-      createdTimestamp: {
-        "$date": createdTimestamp
-      }
+      createdTimestamp: createdTimestamp
+      // createdTimestamp: {
+      //   "$date": createdTimestamp
+      // }
      });
     dataB.push({ 
-      _id: {
-        "$oid": new ObjectId().toString()
-      }, 
+      // _id: {
+      //   "$oid": new ObjectId().toString()
+      // }, 
       corrId: corrIdB, 
-      createdTimestamp: {
-        "$date": createdTimestamp
-      }
+      createdTimestamp: createdTimestamp
+      // createdTimestamp: {
+      //   "$date": createdTimestamp
+      // }
      });
   }
 
@@ -70,54 +73,36 @@ function generateSampleData(sampleSize) {
 }
 
 // Save data to MongoDB
-function saveDataToMongoDB(data) {
-  MongoClient.connect(url, (err, client) => {
-    if (err) {
-      console.error('Error connecting to MongoDB:', err);
-      return;
-    }
-
+async function saveDataToMongoDB(data) {
+  try {
+    const client = await MongoClient.connect(url);
     const db = client.db(dbName);
 
     const collectionAData = db.collection(collectionA);
     const collectionBData = db.collection(collectionB);
 
-    // Insert data to Collection A
-    collectionAData.insertMany(data.dataA, (err, result) => {
-      if (err) {
-        console.error('Error inserting data to Collection A:', err);
-      } else {
-        console.log(`Inserted ${result.insertedCount} documents to Collection A`);
-      }
+    const resultA = await collectionAData.insertMany(data.dataA);
+    console.log(`Inserted ${resultA.insertedCount} documents to Collection A`);
 
-      // Insert data to Collection B
-      collectionBData.insertMany(data.dataB, (err, result) => {
-        if (err) {
-          console.error('Error inserting data to Collection B:', err);
-        } else {
-          console.log(`Inserted ${result.insertedCount} documents to Collection B`);
-        }
+    const resultB = await collectionBData.insertMany(data.dataB);
+    console.log(`Inserted ${resultB.insertedCount} documents to Collection B`);
 
-        // Close the MongoDB connection
-        client.close();
-
-        // Save data to files
-      });
-    });
-  });
+    client.close();
+  } catch (err) {
+    console.error('Error connecting to MongoDB:', err);
+  }
 }
 
 // Save data to a file
-function saveDataToFile(data, filePath) {
+async function saveDataToFile(data, filePath) {
   const jsonData = JSON.stringify(data, null, 2);
 
-  fs.writeFile(filePath, jsonData, (err) => {
-    if (err) {
-      console.error(`Error writing data to file ${filePath}:`, err);
-    } else {
-      console.log(`Data saved to ${filePath}`);
-    }
-  });
+  try {
+    await fs.promises.writeFile(filePath, jsonData);
+    console.log(`Data saved to ${filePath}`);
+  } catch (err) {
+    console.error(`Error writing data to file ${filePath}:`, err);
+  }
 }
 
 // Generate sample data

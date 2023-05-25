@@ -17,3 +17,6 @@ Correlation Id commonality between these two collection is kept at 40%. It will 
 
    ```bash
    npm install
+
+   ```run on local
+   node index.js | tee -a out.log
